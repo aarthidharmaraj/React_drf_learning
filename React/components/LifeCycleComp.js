@@ -97,37 +97,115 @@ import React, { Component } from 'react'
 
 //  getderived state method
 
+// export default class LifeCycleComp extends Component {
+//     constructor(){
+//         super()
+//         this.state={data:0}
+//     }
+//   render() {
+//     return (
+//       <div>
+//         <h1> Get derived Sate From Props method {this.state.data}</h1>
+//         <GetDerivedState data={this.state.data}/>
+//         <button onClick={()=>this.setState({data:this.state.data+1})}> Get State</button>
+//       </div>
+//     )
+//   }
+// }
+
+// class GetDerivedState extends Component {
+//     constructor(){
+//         super()
+//         this.state={currentValue:0}
+//     }
+//     static getDerivedStateFromProps(props,state){
+//         console.warn("the props and state",props,state)
+//         return {currentValue:props.data*10}
+//     }
+//   render() {
+//     console.warn("calling render method")
+//     return (
+//       <div>
+//         <h1> Get derived Sate From Props method Child {this.state.currentValue}</h1>
+        
+//       </div>
+//     )
+//   }
+// }
+
+// // get snapshot before update method using props
+
+// export default class LifeCycleComp extends Component {
+//   constructor()
+//   {
+//     super()
+//     this.state={data:0}
+//   }
+//   render() {
+//     return (
+//       <div><h1> Get snapshot before update method</h1>
+//       <GetSnapShot data={this.state.data}/>
+//       <button onClick={()=>this.setState({data:this.state.data+1})}> Get snapshot</button>
+//       </div>
+//     )
+//   }
+// }
+
+// class GetSnapShot extends Component {
+//   constructor()
+//   {
+//     super()
+//     this.state={value:0}
+//   }
+//   componentDidUpdate(){
+
+//   }
+//   getSnapshotBeforeUpdate(Preprops,PreState){
+//     console.warn("getsnapshot",Preprops.data,this.props.data)
+//     return null
+//   }
+//   render() {
+//     return (
+//       <div><h1> Get snapshot before update method child {this.props.data}</h1>
+//       </div>
+//     )
+//   }
+// }
+
+// // get snapshot before update method using state
+
 export default class LifeCycleComp extends Component {
-    constructor(){
-        super()
-        this.state={data:0}
-    }
+  constructor()
+  {
+    super()
+    this.state={data:0}
+  }
   render() {
     return (
-      <div>
-        <h1> Get derived Sate From Props method {this.state.data}</h1>
-        <GetDerivedState data={this.state.data}/>
-        <button onClick={()=>this.setState({data:this.state.data+1})}> Get State</button>
+      <div><h1> Get snapshot before update method</h1>
+      <GetSnapShot/>
       </div>
     )
   }
 }
 
-class GetDerivedState extends Component {
-    constructor(){
-        super()
-        this.state={currentValue:0}
-    }
-    static getDerivedStateFromProps(props,state){
-        console.warn("the props and state",props,state)
-        return {currentValue:props.data*10}
-    }
+class GetSnapShot extends Component {
+  constructor()
+  {
+    super()
+    this.state={value:0}
+  }
+  componentDidUpdate(Pprops,Pstate,Sshot){
+    console.warn("componet update",Sshot)
+  }
+  getSnapshotBeforeUpdate(Preprops,PreState){
+    console.warn("getsnapshot")
+    return PreState.value *10
+  }
   render() {
-    console.warn("calling render method")
     return (
-      <div>
-        <h1> Get derived Sate From Props method Child {this.state.currentValue}</h1>
-        
+      <div><h1> Get snapshot before update method value child {this.state.value}</h1>
+      <button onClick={()=>this.setState({value:this.state.value+1})}> Update value</button>
       </div>
     )
   }
