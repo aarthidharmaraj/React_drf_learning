@@ -1,4 +1,6 @@
+
 import React from 'react'
+import './formInput.css'
 const defaultValues= {
     name:"",
     email:"",
@@ -8,7 +10,9 @@ const defaultValues= {
     nameError:null,
     emailError:null,
     passwordError:null,
-    valueError:null
+    valueError:null,
+    CpasswordError:null,
+    matchError:null,
 }
 export default class FormValidateComp extends React.Component{
     constructor(){
@@ -31,6 +35,8 @@ export default class FormValidateComp extends React.Component{
         let nameError="";
         let emailError = "";
         let passwordError = "";
+        let matchError="";
+        let CpasswordError="";
         if(!this.state.name){
             nameError = "Name field is required";
         }
@@ -45,18 +51,19 @@ export default class FormValidateComp extends React.Component{
             passwordError = "Password field is required";
         }
         if(!this.state.confirm_password){
-            passwordError = "Confirm Password field is required";
+            CpasswordError = "Confirm Password field is required";
         }
         if (!(this.state.password === this.state.confirm_password)){
-            passwordError="Password and Confirm Password are not matched"
+            matchError="Password and Confirm Password are not matched"
         }
-        if(emailError || valueError || passwordError || nameError){
-            this.setState({valueError,emailError,passwordError,nameError});
+        if(emailError || valueError || passwordError || nameError || matchError||CpasswordError){
+            this.setState({valueError,emailError,passwordError,nameError,matchError,CpasswordError});
             return false;
         }
          return true;
     }
     handleSubmit(event){
+        alert("Are you sure to submit the form")
         event.preventDefault()
         if(this.validate()){
             console.warn(this.state);
@@ -65,25 +72,16 @@ export default class FormValidateComp extends React.Component{
     }
     render(){
         return(
+            <div className='container'>
             <form onSubmit={(e)=>{this.handleSubmit(e)}}>
-            <div>
+            <div className="form">
                         <h3>React Form Validation</h3><br />
-                        <div className="form-row">
-                                <div className="form-row-col">
                                     <label>Name :</label>
                                     <input type="text" className="form-control" name="name" value={this.state.name} onChange={this.handleInputChange} />
                                     <span className="text-danger">{this.state.nameError}</span>
-                                </div>
-                            </div>
-                            <div className="form-row">
-                                <div className="form-row-col">
                                     <label>Email :</label>
                                     <input type="text" className="form-control" name="email" value={this.state.email} onChange={this.handleInputChange} />
                                     <span className="text-danger">{this.state.emailError}</span>
-                                </div>
-                            </div>
-                            <div className="form-row">
-                                <div className="form-row-col">
                                 <label>Select Language</label>
                                     <select value={this.state.language} name="language" onChange={this.handleInputChange}> 
                                     <option>select </option>
@@ -93,29 +91,17 @@ export default class FormValidateComp extends React.Component{
                                     <option value="React"> React</option>
                                     </select>
                                     <span className="text-danger">{this.state.valueError}</span>
-                                </div>
-                            </div>
-                            <div className="form-row">
-                                <div className="form-row-col">
                                     <label>Password :</label>
                                     <input type="password" className="form-control" name="password" value={this.state.password} onChange={this.handleInputChange} />
                                     <span className="text-danger">{this.state.passwordError}</span>
-                                </div>
-                            </div>
-                            <div className="form-row">
-                                <div className="form-row-col">
                                     <label>Confirm Password :</label>
                                     <input type="password" className="form-control" name="confirm_password" value={this.state.confirm_password} onChange={this.handleInputChange} />
-                                    <span className="text-danger">{this.state.passwordError}</span>
-                                </div>
-                            </div>
-                            <div className="form-row">
-                                <div className="form-col-submit">
+                                    <span className="text-danger">{this.state.CpasswordError} {this.state.matchError}</span>
+                                    <label></label>
                                     <input type="submit"className="submit-button" value="Submit" />
-                                </div>
-                            </div>
                     </div>
                     </form>
+                    </div>
         )  
     }
 }
