@@ -1,12 +1,12 @@
 import logo from "./logo.svg";
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Home from "./login/Home.js";
-import About from "./login/About.js";
-import UserLogin from "./login/UserLogin.js";
+import Home from "./Home.js";
+import About from "./About.js";
+import UserLogin from "./UserLogin.js";
 // import RegisterNewUser from './login/RegisterComp.js'
-import RegisteredUsers from "./login/RegisteredUsers";
-import RegisterNewUser from "./login/RegisterUserComp";
+import RegisteredUsers from "./RegisteredUsers";
+import RegisterNewUser from "./RegisterUserComp";
 
 function App() {
   return (

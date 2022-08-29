@@ -3,6 +3,8 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
+import email_regx from "../patterns/email_regx";
+import phone_regx from "../patterns/phone_regx";
 
 export default class RegisterNewUser extends Component {
   constructor() {
@@ -38,11 +40,8 @@ export default class RegisterNewUser extends Component {
           this.setState({
             persons: response.data,
           });
-          alert(
-            "Form Submitted",
-            this.state.persons["USERNAME"],
-            "has been registered"
-          );
+          alert("Form Submitted");
+          this.setState({ persons: "" });
         })
         .catch((error) => {
           alert("Data Saved Failed");
@@ -53,8 +52,6 @@ export default class RegisterNewUser extends Component {
     let persons = this.state.persons;
     let errors = {};
     let formIsValid = true;
-    let phregx = /^\d{10}$/;
-    let emailregx = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (!persons["FULL_NAME"]) {
       errors["FULL_NAME"] = "Enter your full name";
     }
@@ -79,14 +76,14 @@ export default class RegisterNewUser extends Component {
     }
     if (!persons["CONTACT_NUMBER"]) {
       errors["CONTACT_NUMBER"] = "Enter your contact details";
-    } else if (phregx.test(persons["CONTACT_NUMBER"]) === false) {
+    } else if (phone_regx.test(persons["CONTACT_NUMBER"]) === false) {
       errors["CONTACT_NUMBER"] =
         "Contact details should contain only 10 digits";
     }
     if (!persons["EMAIL_ADDRESS"]) {
       errors["EMAIL"] = "Email Address is required";
     }
-    if (emailregx.test(persons["EMAIL_ADDRESS"]) === false) {
+    if (email_regx.test(persons["EMAIL_ADDRESS"]) === false) {
       errors["EMAIL"] = "Enter a valid email address";
     }
     if (!persons["MARITAL_STATUS"]) {
@@ -134,7 +131,7 @@ export default class RegisterNewUser extends Component {
   };
   render() {
     return (
-      <div style={{ textalign: "center" }}>
+      <div className="container" style={{ width: "50%" }}>
         <h2>USER REGISTRATION</h2>
         <Form>
           {/* style={{ width: "50%" }} */}
@@ -273,12 +270,6 @@ export default class RegisterNewUser extends Component {
             ) : (
               <EyeSlashFill onClick={this.hideShowConPassword}></EyeSlashFill>
             )}
-            {/* <EyeSlash
-              className="password__show"
-              onClick={this.hideShowConPassword}
-            >
-              {this.state.ctype === "text" ? "Hide password" : "Show password"}
-            </EyeSlash> */}
             <span className="text-danger">
               {this.state.errors["CONFIRM_PASSWORD"]}
             </span>
