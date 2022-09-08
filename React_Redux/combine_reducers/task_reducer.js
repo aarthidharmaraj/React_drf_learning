@@ -1,6 +1,3 @@
-const initialization = {
-  tasks: [],
-};
 const reducer = (tasks = [], action) => {
   switch (action.type) {
     case "ADD":
