@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import instance from "../api/api_instance.js";
 import { Form, Button } from "react-bootstrap";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
@@ -7,20 +7,14 @@ import email_regx from "../patterns/email_regx";
 import phone_regx from "../patterns/phone_regx";
 export default function Register() {
   const [persons, setPersons] = useState({});
-  const [error, setError] = useRef({});
+  const [error, setError] = useState({});
   const [passtype, setPassType] = useState("password");
   const [conpasstype, setConPassType] = useState("password");
-  const [formIsValid, setSuccess] = useState(true);
-  // const [showMessage, setShowMessage] = useState(true);
-  // const showHideMessages = () => {
-  //   handleError();
-  //   if (formIsValid) {
-  //     setShowMessage(false);
-  //   }
-  // };
+  const [formIsValid, setSuccess] = useState(false);
   const handleInputChange = (e) => {
     persons[e.target.name] = e.target.value;
     setPersons(persons);
+    setError({});
   };
   const hideShowPassword = () => {
     setPassType(passtype === "text" ? "password" : "text");
@@ -29,15 +23,9 @@ export default function Register() {
     setConPassType(conpasstype === "text" ? "password" : "text");
   };
   const createUser = (event) => {
-    // handleError();
     event.preventDefault();
-    // console.log(formIsValid);
+    console.log(formIsValid);
     if (formIsValid) {
-      //   alert("The form is submitted");
-      // } else {
-      //   alert("The form cannot be submitted");
-      // }
-      // console.log(handleError(event));{
       console.log("APi connected");
       instance
         .post("http://localhost:8000/employee_user/", persons)
@@ -49,6 +37,8 @@ export default function Register() {
         .catch((error) => {
           alert("Data Saved Failed");
         });
+    } else {
+      alert("Fill the details in the form");
     }
   };
   const calculateAge = (date) => {
@@ -62,8 +52,8 @@ export default function Register() {
     return age_now;
   };
   const handleError = (e) => {
+    let field = e.target.name;
     if (!persons.FULL_NAME) {
-      // error[e.target.name] = "Enter your full name";
       error.FULL_NAME = "Enter your full name";
     } else if (typeof persons.FULL_NAME !== "undefined") {
       if (!persons.FULL_NAME.match(/^[a-zA-Z]+$/)) {
@@ -78,11 +68,10 @@ export default function Register() {
     if (!persons.GENDER) {
       error.GENDER = "This field is required";
     }
-    if (!persons.DATE_OF_BIRTH) {
-      error.DOB = "Enter your date of birth";
-    }
-    if (calculateAge(persons.DATE_OF_BIRTH) < 20) {
-      error.DOB = "Not Valid age";
+    if (persons.DATE_OF_BIRTH === undefined) {
+      error.DATE_OF_BIRTH = "Enter your date of birth";
+    } else if (calculateAge(persons.DATE_OF_BIRTH) < 20) {
+      error.DATE_OF_BIRTH = "Not Valid age";
     }
     if (!persons.CONTACT_NUMBER) {
       error.CONTACT_NUMBER = "Enter your contact details";
@@ -90,47 +79,45 @@ export default function Register() {
       error.CONTACT_NUMBER = "Contact details should contain only 10 digits";
     }
     if (!persons.EMAIL_ADDRESS) {
-      error.EMAIL = "Email Address is required";
-    }
-    if (email_regx.test(persons.EMAIL_ADDRESS) === false) {
-      error.EMAIL = "Enter a valid email address";
+      error.EMAIL_ADDRESS = "Email Address is required";
+    } else if (email_regx.test(persons.EMAIL_ADDRESS) === false) {
+      error.EMAIL_ADDRESS = "Enter a valid email address";
     }
     if (!persons.MARITAL_STATUS) {
-      error.MARITAL = "This field is required";
+      error.MARITAL_STATUS = "This field is required";
     }
     if (!persons.PERMANENT_ADDRESS) {
-      error.ADDRESS = "The address field is empty";
+      error.PERMANENT_ADDRESS = "The address field is empty";
     }
     if (!persons.PASSWORD) {
       error.PASSWORD = "Password field is required";
+    } else if (persons.PASSWORD.length < 10 || persons.PASSWORD.length > 30) {
+      error.PASSWORD = "The password must be between 10 to 30 characters";
     }
     if (!persons.CONFIRM_PASSWORD) {
       error.CONFIRM_PASSWORD = "Confirm Password field is required";
+    } else if (persons.CONFIRM_PASSWORD < 10 || persons.CONFIRM_PASSWORD > 30) {
+      error.CONFIRM_PASSWORD =
+        "Confirm password must be between 10 to 30 characters";
+    } else if (!(persons.PASSWORD === persons.CONFIRM_PASSWORD)) {
+      error.CONFIRM_PASSWORD = "Password and Confirm Password are not matched";
     }
-    // if (
-    //   persons.PASSWORD.length < 10 ||
-    //   persons.PASSWORD.length > 30 ||
-    //   persons.CONFIRM_PASSWORD < 10 ||
-    //   persons.CONFIRM_PASSWORD > 30
-    // ) {
-    //   error.PASSWORD =
-    //     "The password or confirm password must be between 10 to 30 characters";
-    // }
-    // if (!(persons.PASSWORD === persons.CONFIRM_PASSWORD)) {
-    //   error.MATCH = "Password and Confirm Password are not matched";
-    // }
-    setError(error);
-
-    // console.log(error);
-
-    if (Object.keys(error).length > 0) {
-      setSuccess(false);
+    return error[field];
+  };
+  const validateData = (e) => {
+    let field = e.target.name;
+    error[field] = handleError(e);
+    if (error[field]) {
+      setError({ [field]: error[field] });
+    }
+    if (!(Object.keys(error).length > 1)) {
+      setSuccess(true);
     }
   };
   return (
     <div className="container" style={{ width: "50%" }}>
       <h2>USER REGISTRATION</h2>
-      <Form onSubmit={(e) => handleError(e)}>
+      <Form>
         <Form.Group className="mb-3">
           <Form.Label>FULL NAME</Form.Label>
           <Form.Control
@@ -138,8 +125,7 @@ export default function Register() {
             placeholder="Enter full name"
             name="FULL_NAME"
             onChange={(e) => handleInputChange(e)}
-            onBlur={handleError}
-            // onClick={showHideMessages}
+            onBlur={validateData}
           />
 
           <span className="text-danger">{error.FULL_NAME}</span>
@@ -151,7 +137,7 @@ export default function Register() {
             placeholder="Enter user name"
             name="USERNAME"
             onChange={(e) => handleInputChange(e)}
-            onBlur={(e) => handleError(e)}
+            onBlur={(e) => validateData(e)}
           />
           <span className="text-danger">{error.USERNAME}</span>
         </Form.Group>
@@ -160,7 +146,7 @@ export default function Register() {
           <Form.Select
             name="GENDER"
             onChange={(e) => handleInputChange(e)}
-            onBlur={(e) => handleError(e)}
+            onBlur={(e) => validateData(e)}
           >
             <option>select</option>
             <option name="GENDER" value="Male">
@@ -182,9 +168,9 @@ export default function Register() {
             placeholder="Enter Date of Birth"
             name="DATE_OF_BIRTH"
             onChange={(e) => handleInputChange(e)}
-            onBlur={(e) => handleError(e)}
+            onBlur={(e) => validateData(e)}
           />
-          <span className="text-danger">{error.DOB}</span>
+          <span className="text-danger">{error.DATE_OF_BIRTH}</span>
         </Form.Group>
         <Form.Group className="mb-3">
           <Form.Label>CONTACT NUMBER</Form.Label>
@@ -193,7 +179,7 @@ export default function Register() {
             placeholder="Enter your contact number"
             name="CONTACT_NUMBER"
             onChange={(e) => handleInputChange(e)}
-            onBlur={(e) => handleError(e)}
+            onBlur={(e) => validateData(e)}
           />
           <span className="text-danger">{error.CONTACT_NUMBER}</span>
         </Form.Group>
@@ -204,12 +190,12 @@ export default function Register() {
             placeholder="Enter valid email id"
             name="EMAIL_ADDRESS"
             onChange={(e) => handleInputChange(e)}
-            onBlur={(e) => handleError(e)}
+            onBlur={(e) => validateData(e)}
           />
           <Form.Text className="text-muted">
             We'll never share your email with anyone else.
           </Form.Text>
-          <span className="text-danger">{error.EMAIL}</span>
+          <span className="text-danger">{error.EMAIL_ADDRESS}</span>
         </Form.Group>
         <Form.Group className="mb-3">
           <Form.Label>MARITAL STATUS</Form.Label>
@@ -218,9 +204,9 @@ export default function Register() {
             placeholder="Marital staus"
             name="MARITAL_STATUS"
             onChange={(e) => handleInputChange(e)}
-            onBlur={(e) => handleError(e)}
+            onBlur={(e) => validateData(e)}
           />
-          <span className="text-danger">{error.MARITAL}</span>
+          <span className="text-danger">{error.MARITAL_STATUS}</span>
         </Form.Group>
         <Form.Group className="mb-3">
           <Form.Label>PERMANENT ADDRESS</Form.Label>
@@ -229,9 +215,9 @@ export default function Register() {
             placeholder="Type your address here"
             name="PERMANENT_ADDRESS"
             onChange={(e) => handleInputChange(e)}
-            onBlur={(e) => handleError(e)}
+            onBlur={(e) => validateData(e)}
           />
-          <span className="text-danger">{error.ADDRESS}</span>
+          <span className="text-danger">{error.PERMANENT_ADDRESS}</span>
         </Form.Group>
         <Form.Group className="mb-3">
           <Form.Label>PASSWORD</Form.Label>
@@ -241,7 +227,7 @@ export default function Register() {
             name="PASSWORD"
             className="password__input"
             onChange={(e) => handleInputChange(e)}
-            onBlur={(e) => handleError(e)}
+            onBlur={(e) => validateData(e)}
           />
           {passtype === "text" ? (
             <EyeFill onClick={hideShowPassword}></EyeFill>
@@ -257,7 +243,7 @@ export default function Register() {
             placeholder="Re-enter the password"
             name="CONFIRM_PASSWORD"
             onChange={(e) => handleInputChange(e)}
-            onBlur={(e) => handleError(e)}
+            onBlur={(e) => validateData(e)}
           />
           {conpasstype === "text" ? (
             <EyeFill onClick={hideShowConPassword}></EyeFill>
@@ -265,12 +251,10 @@ export default function Register() {
             <EyeSlashFill onClick={hideShowConPassword}></EyeSlashFill>
           )}
           <span className="text-danger">{error.CONFIRM_PASSWORD}</span>
-          <span className="text-danger">{error.MATCH}</span>
         </Form.Group>
         <Button
           className="btn btn-primary btn-lg"
           onClick={(e) => createUser(e)}
-          onBlur={handleError}
         >
           Register
         </Button>

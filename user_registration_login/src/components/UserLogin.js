@@ -17,30 +17,27 @@ export default function UserLogin() {
     persons[event.target.name] = event.target.value;
     setPersons(persons);
     // console.log(persons);
+    setError({});
   };
-  const validate = () => {
+  const validate = (e) => {
+    let field = e.target.name;
     if (!persons.EMAIL_ADDRESS) {
-      error.EMAIL = "Email Address is required";
+      error.EMAIL_ADDRESS = "Email Address is required";
     } else if (email_regx.test(persons.EMAIL_ADDRESS) === false) {
-      error.EMAIL = "Enter a valid email address";
+      error.EMAIL_ADDRESS = "Enter a valid email address";
     }
     if (!persons.PASSWORD) {
       error.PASSWORD = "Password field is required";
     }
-    setError(error);
-    if (
-      typeof error.EMAIL === undefined &&
-      typeof error.PASSWORD === undefined
-    ) {
+    setError({ [field]: error[field] });
+    if (!(Object.keys(error).length > 0)) {
       setSuccess(true);
     }
-    // console.log("errors", error.EMAIL, error.PASSWORD);
+    console.log("errors", error.EMAIL_ADDRESS, error.PASSWORD);
   };
   const loginUser = (event) => {
     event.preventDefault();
-    // validate();
-    // console.log(validate());
-    // if (validate()) {
+    console.log(formIsValid);
     if (formIsValid) {
       // instance
       //   .get("http://localhost:8000/employee_user/", {
@@ -71,6 +68,8 @@ export default function UserLogin() {
         .catch((error) => {
           alert("No response from api");
         });
+    } else {
+      alert("Enter the username and Password to procced");
     }
   };
   return (
@@ -86,9 +85,9 @@ export default function UserLogin() {
               className="form-control"
               name="EMAIL_ADDRESS"
               onChange={(e) => handleInputChange(e)}
-              onBlur={(e) => validate()}
+              onBlur={(e) => validate(e)}
             />
-            <span className="text-danger">{error.EMAIL}</span>
+            <span className="text-danger">{error.EMAIL_ADDRESS}</span>
           </div>
           <div className="form-group">
             <Form.Label>Password :</Form.Label>
@@ -97,7 +96,7 @@ export default function UserLogin() {
               className="form-control"
               name="PASSWORD"
               onChange={(e) => handleInputChange(e)}
-              onBlur={(e) => validate()}
+              onBlur={(e) => validate(e)}
             />
             {passtype === "text" ? (
               <EyeFill onClick={hideShowPassword}></EyeFill>
