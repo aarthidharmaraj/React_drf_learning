@@ -1,23 +1,20 @@
 import React, { useEffect } from "react";
 import Table from "react-bootstrap/Table";
-import { connect } from "react-redux";
 import { TrashFill } from "react-bootstrap-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { loadUsers, deleteUser } from "../store/action/actions";
 import Button from "react-bootstrap/Button";
-import DeleteUser from "./DeleteUser";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { useNavigate } from "react-router-dom";
 const DisplayUsers = () => {
   let dispatch = useDispatch();
-  let history = useNavigate();
+  let navigate = useNavigate();
   const { users } = useSelector((state) => state.usersdata);
   useEffect(() => {
     dispatch(loadUsers());
   }, []);
 
   const handleRemoveUser = (id) => {
-    <DeleteUser id={id} />;
     if (
       window.confirm(
         "The user will be deleted Permamnently! Are you sure to Remove the user?"
@@ -28,8 +25,14 @@ const DisplayUsers = () => {
       dispatch(loadUsers());
     }
   };
+  const handleEditUser = (id) => {
+    // console.log("edit", id);
+    navigate(`/edituser/${id}`);
+    // navigate(`edituser/:${id}`);
+  };
   return (
     <div>
+      {/* <Button onClick={() => history.push("/addUser")}>AddUser</Button> */}
       <Table striped="rows">
         <thead>
           {/* {Object.keys(users).map((key, index) => {
@@ -41,7 +44,6 @@ const DisplayUsers = () => {
               </tr>
             );
           })} */}
-          <Button onClick={() => history.push("/addUser")}>AddUser</Button>
           <tr>
             <th>Id</th>
             <th>FULL NAME</th>
@@ -79,7 +81,11 @@ const DisplayUsers = () => {
                 <td> {user.PERMANENT_ADDRESS}</td>
                 <td>
                   <ButtonGroup className="mb-2">
-                    <Button variant="primary" size="sm">
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => handleEditUser(user.id)}
+                    >
                       EDIT
                     </Button>
                     <Button variant="danger" size="lg">

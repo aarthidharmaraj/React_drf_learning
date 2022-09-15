@@ -3,7 +3,7 @@ import RegsiterForm from "../components/RegisterForm";
 const AddUsers = () => {
   return (
     <div>
-      <h1> Regisration Form</h1>
+      <h1> Registration Form</h1>
       <RegsiterForm />
     </div>
   );

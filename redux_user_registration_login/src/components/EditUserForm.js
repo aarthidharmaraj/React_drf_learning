@@ -1,30 +1,37 @@
-import React, { useState } from "react";
-// import instance from "../api/api_instance.js";
+import React, { useState, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
-// import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import email_regx from "../constants/email_regx";
 import phone_regx from "../constants/phone_regx";
-import { useDispatch } from "react-redux";
-import { registerUser, checkEmail } from "../store/action/actions.js";
-export default function Register() {
+import { useDispatch, useSelector } from "react-redux";
+import { getSingleUser, updateSingleUser } from "../store/action/actions.js";
+export default function UpdateUser() {
   let navigate = useNavigate();
   let dispatch = useDispatch();
+  const { getUser } = useSelector((state) => state.actiondata);
+  let { id } = useParams();
   const [persons, setPersons] = useState({});
   const [error, setError] = useState({});
   const [passtype, setPassType] = useState("password");
   const [conpasstype, setConPassType] = useState("password");
   const [formIsValid, setSuccess] = useState(false);
+  useEffect(() => {
+    dispatch(getSingleUser(id));
+  }, []);
+  useEffect(() => {
+    console.log("getUser", getUser);
+    if (getUser) {
+      setPersons({ ...getUser });
+    }
+  }, [getUser]);
+
   const handleInputChange = (e) => {
     persons[e.target.name] = e.target.value;
     setPersons(persons);
     setError({});
-  };
-  const handleEmail = (e) => {
-    dispatch(checkEmail(e.target.value));
   };
   const hideShowPassword = () => {
     setPassType(passtype === "text" ? "password" : "text");
@@ -36,7 +43,7 @@ export default function Register() {
     event.preventDefault();
     console.log(formIsValid);
     if (formIsValid) {
-      dispatch(registerUser(persons));
+      dispatch(updateSingleUser(persons, id));
       navigate("/");
     } else {
       alert("Fill the details in the form");
@@ -215,7 +222,6 @@ export default function Register() {
               name="EMAIL_ADDRESS"
               onChange={(e) => handleInputChange(e)}
               onBlur={(e) => validateData(e)}
-              onInput={(e) => handleEmail(e)}
             />
             <Form.Text className="text-muted">
               We'll never share your email with anyone else.
@@ -273,8 +279,8 @@ export default function Register() {
             ) : (
               <EyeSlashFill onClick={hideShowPassword}></EyeSlashFill>
             )}
+            <span className="text-danger">{error.PASSWORD}</span>
           </Col>
-          <span className="text-danger">{error.PASSWORD}</span>
         </Form.Group>
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm={3}>
@@ -298,24 +304,13 @@ export default function Register() {
             <span className="text-danger">{error.CONFIRM_PASSWORD}</span>
           </Col>
         </Form.Group>
-        <Row>
-          <Col>
-            <br />
-            <Button variant="primary" size="lg" onClick={(e) => createUser(e)}>
-              Register
-            </Button>
-          </Col>
-          <Col sm={5}>
-            <h6>Already an user, login here</h6>
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={() => navigate("/login")}
-            >
-              Login
-            </Button>
-          </Col>
-        </Row>
+        <Button variant="primary" size="lg" onClick={(e) => createUser(e)}>
+          UPDATE
+        </Button>
+        {/* <h4>Already an user, login here</h4> */}
+        {/* <Button variant="secondary" size="sm" onClick={() => navigate("login")}>
+          login
+        </Button> */}
       </Form>
     </div>
   );

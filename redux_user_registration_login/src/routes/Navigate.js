@@ -9,7 +9,7 @@ export default class Navigate extends Component {
         <Link to="about">About</Link>&nbsp;&nbsp;
         <Link to="register"> User Registration</Link>&nbsp;&nbsp;
         <Link to="login"> User Login</Link>&nbsp;&nbsp;
-        <Link to="display_users">Display Users</Link>&nbsp;&nbsp;
+        <Link to="displayusers">Display Users</Link>&nbsp;&nbsp;
         <Outlet />
       </div>
     );
