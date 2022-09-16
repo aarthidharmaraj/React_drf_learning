@@ -2,8 +2,6 @@ import * as types from "./actionTypes";
 import instance from "../../api/api_instance";
 import apiUrl from "../../constants/api_url";
 import apiUrlId from "../../constants/api_url_id";
-// import Alert from "react-bootstrap/Alert";
-// import Alert from "@mui/material/Alert";
 const getUsers = (users) => ({
   type: types.GET_USERS,
   payload: users,
@@ -28,7 +26,7 @@ const singleUserGet = (user) => ({
 const userDelete = () => ({
   type: types.DELETE_USER,
 });
-export const loadUsers = () => {
+export const displayUsers = () => {
   return function (dispatch) {
     instance
       .get(apiUrl)
@@ -37,7 +35,7 @@ export const loadUsers = () => {
           // console.log("response", response.data);
           dispatch(getUsers(response.data));
         } else {
-          alert(`Cannot get response from api /${response.status}`);
+          alert(`Cannot get response from api ${response.status}`);
         }
       })
       .catch((error) => {
@@ -54,9 +52,9 @@ export const deleteUser = (id) => {
         if (response.status === 200) {
           // console.log("response", response.data);
           dispatch(userDelete());
-          dispatch(loadUsers());
+          dispatch(displayUsers());
         } else {
-          alert(`Cannot get response from api /${response.status}`);
+          alert(`Cannot get response from api ${response.status}`);
         }
       })
       .catch((error) => {
@@ -76,7 +74,7 @@ export const registerUser = (user) => {
           dispatch(userRegister());
           alert("The user has been added successfully");
         } else {
-          alert(`Cannot get response from api /${response.status}`);
+          alert(`Cannot get response from api ${response.status}`);
         }
       })
       .catch((error) => {
@@ -94,7 +92,7 @@ export const getSingleUser = (id) => {
         if (response.status === 200) {
           dispatch(singleUserGet(response.data));
         } else {
-          alert(`Cannot get response from api /${response.status}`);
+          alert(`Cannot get response from api ${response.status}`);
         }
       })
       .catch((error) => {
@@ -106,14 +104,13 @@ export const getSingleUser = (id) => {
 
 export const updateSingleUser = (user, id) => {
   return function (dispatch) {
-    instance
-      .post(apiUrlId(id), user)
+    fetch(apiUrlId(id), user)
       .then((response) => {
         if (response.status === 200) {
           dispatch(userUpdate());
           alert("The user details has been updated successfully");
         } else {
-          alert(`Cannot get response from api /${response.status}`);
+          alert(`Cannot get response from api ${response.status}`);
         }
       })
 
@@ -126,14 +123,19 @@ export const updateSingleUser = (user, id) => {
 
 export const loginUser = (email, password) => {
   return function (dispatch) {
+    let data = {
+      credentials: { EMAIL_ADDRESS: email, PASSWORD: password },
+    };
+
     instance
-      .get(apiUrl, email, password)
+      .post(apiUrl, email, password)
       .then((response) => {
+        // console.log(response.status);
         if (response.status === 200) {
           dispatch(userLogin());
           alert("The user has been logged in successfully");
         } else {
-          alert(`Cannot get response from api /${response.status}`);
+          alert(`Cannot get response from api ${response.status}`);
         }
       })
       .catch((error) => {
@@ -145,17 +147,15 @@ export const loginUser = (email, password) => {
 
 export const checkEmail = (email) => {
   return function (dispatch) {
-    console.log(apiUrl + "?EMAIL_ADDRESS=", email);
     instance
-      .get(apiUrl + `?${(EMAIL_ADDRESS = email)}`)
+      .get(apiUrl, email)
       .then((response) => {
         if (response.status === 200) {
           dispatch(userCheck());
           alert("The entered email is already present");
+        } else {
+          alert(`Cannot get response from api ${response.status}`);
         }
-        // else {
-        //   alert(`Cannot get response from api /${response.status}`);
-        // }
       })
       .catch((error) => {
         console.log("error", error);

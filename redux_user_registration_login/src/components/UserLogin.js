@@ -15,15 +15,17 @@ export default function UserLogin() {
   const [error, setError] = useState({});
   const [passtype, setPassType] = useState("password");
   const [formIsValid, setSuccess] = useState(false);
+
   const hideShowPassword = () => {
     setPassType(passtype === "text" ? "password" : "text");
   };
+
   const handleInputChange = (event) => {
     persons[event.target.name] = event.target.value;
     setPersons(persons);
-    // console.log(persons);
     setError({});
   };
+
   const validate = (e) => {
     let field = e.target.name;
     if (!persons.EMAIL_ADDRESS) {
@@ -38,8 +40,8 @@ export default function UserLogin() {
     if (!(Object.keys(error).length > 0)) {
       setSuccess(true);
     }
-    // console.log("errors", error.EMAIL_ADDRESS, error.PASSWORD);
   };
+
   const handleLogin = (event) => {
     event.preventDefault();
     console.log(formIsValid);
