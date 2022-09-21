@@ -1,12 +1,16 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
 import { useDispatch } from "react-redux";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import { loginUser } from "../store/action/actions";
-import email_regx from "../constants/email_regx";
+import { loginUser } from "store/action/actions";
+// import handleError from "./ErrorHandler";
+import { hideShowPassword } from "utils/hideShowPassword";
+import { handleInputChange } from "utils/handleInput";
+import { validate } from "utils/validate";
+import { debounce } from "lodash";
 
 export default function UserLogin() {
   let dispatch = useDispatch();
@@ -16,31 +20,11 @@ export default function UserLogin() {
   const [passtype, setPassType] = useState("password");
   const [formIsValid, setSuccess] = useState(false);
 
-  const hideShowPassword = () => {
-    setPassType(passtype === "text" ? "password" : "text");
-  };
-
-  const handleInputChange = (event) => {
+  const handleInputChange = debounce((event) => {
     persons[event.target.name] = event.target.value;
     setPersons(persons);
-    setError({});
-  };
-
-  const validate = (e) => {
-    let field = e.target.name;
-    if (!persons.EMAIL_ADDRESS) {
-      error.EMAIL_ADDRESS = "Email Address is required";
-    } else if (email_regx.test(persons.EMAIL_ADDRESS) === false) {
-      error.EMAIL_ADDRESS = "Enter a valid email address";
-    }
-    if (!persons.PASSWORD) {
-      error.PASSWORD = "Password field is required";
-    }
-    setError({ [field]: error[field] });
-    if (!(Object.keys(error).length > 0)) {
-      setSuccess(true);
-    }
-  };
+    console.log(persons);
+  }, 2000);
 
   const handleLogin = (event) => {
     event.preventDefault();
@@ -56,6 +40,7 @@ export default function UserLogin() {
   return (
     <div className="container" style={{ width: "50%" }}>
       <Form>
+        <h1> Login Form</h1>
         <br />
         <Form.Group as={Row}>
           <Form.Label column sm={4}>
@@ -67,7 +52,7 @@ export default function UserLogin() {
               className="form-control"
               name="EMAIL_ADDRESS"
               onChange={(e) => handleInputChange(e)}
-              onBlur={(e) => validate(e)}
+              onBlur={(e) => validate(e, persons, error, setError, setSuccess)}
             />
             <span className="text-danger">{error.EMAIL_ADDRESS}</span>
           </Col>
@@ -83,14 +68,18 @@ export default function UserLogin() {
               className="form-control"
               name="PASSWORD"
               onChange={(e) => handleInputChange(e)}
-              onBlur={(e) => validate(e)}
+              onBlur={(e) => validate(e, persons, error, setError, setSuccess)}
             />
           </Col>
           <Col>
             {passtype === "text" ? (
-              <EyeFill onClick={hideShowPassword}></EyeFill>
+              <EyeFill
+                onClick={() => hideShowPassword(passtype, setPassType)}
+              ></EyeFill>
             ) : (
-              <EyeSlashFill onClick={hideShowPassword}></EyeSlashFill>
+              <EyeSlashFill
+                onClick={() => hideShowPassword(passtype, setPassType)}
+              ></EyeSlashFill>
             )}
             <span className="text-danger">{error.PASSWORD}</span>
           </Col>

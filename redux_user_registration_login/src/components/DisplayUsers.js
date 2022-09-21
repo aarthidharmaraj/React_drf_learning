@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Table from "react-bootstrap/Table";
 import { TrashFill } from "react-bootstrap-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { displayUsers, deleteUser } from "../store/action/actions";
+import { displayUsers, deleteUser } from "store/action/actions";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { useNavigate } from "react-router-dom";
@@ -31,11 +31,21 @@ const DisplayUsers = () => {
   const handleEditUser = (id) => {
     navigate(`/edituser/${id}`);
   };
-
   return (
     <div>
+      {/* <Button onClick={() => history.push("/addUser")}>AddUser</Button> */}
+      <h1> Details of Registered Users</h1>
       <Table striped="rows">
         <thead>
+          {/* {Object.keys(users).map((key, index) => {
+            return (
+              <tr key={index}>
+                <th>
+                  {{ key }}: {users[key]}
+                </th>
+              </tr>
+            );
+          })} */}
           <tr>
             <th>Id</th>
             <th>FULL NAME</th>
@@ -47,9 +57,18 @@ const DisplayUsers = () => {
             <th>MARITAL STATUS</th>
             <th>PERMANENT ADDRESS</th>
             <th>Action</th>
+            {/* <th>EDIT</th>
+            <th>REMOVE</th> */}
           </tr>
         </thead>
         <tbody>
+          {/* {Object.values(users).map((value, index) => {
+            return (
+              <tr key={index}>
+                <td>{{ value }}</td>
+              </tr>
+            );
+          })} */}
           {users &&
             users.map((user) => (
               <tr key={user.id}>
@@ -78,6 +97,20 @@ const DisplayUsers = () => {
                     </Button>
                   </ButtonGroup>
                 </td>
+                {/* <td>
+                  <div className="d-grid gap-2">
+                    <Button variant="primary" size="sm">
+                      EDIT
+                    </Button>
+                  </div>
+                </td>
+                <td>
+                  <Button variant="outline-danger" size="lg">
+                    <TrashFill
+                      onClick={() => handleRemoveUser(user.id)}
+                    ></TrashFill>
+                  </Button> 
+                </td>*/}
               </tr>
             ))}
         </tbody>

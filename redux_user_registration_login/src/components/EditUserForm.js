@@ -6,7 +6,7 @@ import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
 import { useNavigate, useParams } from "react-router-dom";
 import handleError from "./ErrorHandler";
 import { useDispatch, useSelector } from "react-redux";
-import { getSingleUser, updateSingleUser } from "../store/action/actions.js";
+import { getSingleUser, updateSingleUser } from "store/action/actions.js";
 
 export default function UpdateUser() {
   let navigate = useNavigate();
@@ -21,7 +21,7 @@ export default function UpdateUser() {
 
   useEffect(() => {
     dispatch(getSingleUser(id));
-  }, []);
+  });
 
   useEffect(() => {
     console.log("getUser", getUser);
@@ -49,7 +49,7 @@ export default function UpdateUser() {
     console.log(formIsValid);
     if (formIsValid) {
       dispatch(updateSingleUser(persons, id));
-      navigate("/");
+      navigate("/displayusers");
     } else {
       alert("Fill the details in the form");
     }

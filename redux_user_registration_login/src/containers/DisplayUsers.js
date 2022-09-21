@@ -1,13 +1,12 @@
 import React from "react";
 import Table from "react-bootstrap/Table";
 import { TrashFill } from "react-bootstrap-icons";
-import { displayUsers, deleteUser } from "../store/action/actions";
+import { displayUsers, deleteUser } from "store/action/actions";
 import Button from "react-bootstrap/Button";
 import { connect } from "react-redux";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { bindActionCreators } from "redux";
 import { Navigate } from "react-router-dom";
-// import EditUser from "../pages/EditUser";
 
 const mapStateToProps = (state) => {
   const users = state.usersdata;

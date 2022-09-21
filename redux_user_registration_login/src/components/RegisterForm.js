@@ -5,8 +5,9 @@ import Row from "react-bootstrap/Row";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { registerUser, checkEmail } from "../store/action/actions.js";
+import { registerUser, checkEmail } from "store/action/actions.js";
 import handleError from "./ErrorHandler";
+import * as handlePass from "utils/hideShowPassword";
 
 export default function Register() {
   let navigate = useNavigate();
@@ -23,21 +24,13 @@ export default function Register() {
     setError({});
   };
 
-  const handleEmail = () => {
-    dispatch(checkEmail(persons.EMAIL_ADDRESS));
-  };
-
-  const hideShowPassword = () => {
-    setPassType(passtype === "text" ? "password" : "text");
-  };
-
-  const hideShowConPassword = () => {
-    setConPassType(conpasstype === "text" ? "password" : "text");
-  };
+  // const handleEmail = () => {
+  //   dispatch(checkEmail(persons.EMAIL_ADDRESS));
+  // };
 
   const createUser = (event) => {
     event.preventDefault();
-    handleEmail();
+    // handleEmail();
     console.log(formIsValid);
     if (formIsValid) {
       dispatch(registerUser(persons));
@@ -59,6 +52,7 @@ export default function Register() {
   };
   return (
     <div className="container" style={{ width: "50%" }}>
+      <h1>Registration Form</h1>
       <br />
       <Form>
         <Form.Group as={Row} className="mb-3">
@@ -211,9 +205,17 @@ export default function Register() {
           </Col>
           <Col>
             {passtype === "text" ? (
-              <EyeFill onClick={hideShowPassword}></EyeFill>
+              <EyeFill
+                onClick={() =>
+                  handlePass.hideShowPassword(passtype, setPassType)
+                }
+              ></EyeFill>
             ) : (
-              <EyeSlashFill onClick={hideShowPassword}></EyeSlashFill>
+              <EyeSlashFill
+                onClick={() =>
+                  handlePass.hideShowPassword(passtype, setPassType)
+                }
+              ></EyeSlashFill>
             )}
           </Col>
           <span className="text-danger">{error.PASSWORD}</span>
@@ -233,9 +235,17 @@ export default function Register() {
           </Col>
           <Col>
             {conpasstype === "text" ? (
-              <EyeFill onClick={hideShowConPassword}></EyeFill>
+              <EyeFill
+                onClick={() =>
+                  handlePass.hideShowConPassword(conpasstype, setConPassType)
+                }
+              ></EyeFill>
             ) : (
-              <EyeSlashFill onClick={hideShowConPassword}></EyeSlashFill>
+              <EyeSlashFill
+                onClick={() =>
+                  handlePass.hideShowConPassword(conpasstype, setConPassType)
+                }
+              ></EyeSlashFill>
             )}
             <span className="text-danger">{error.CONFIRM_PASSWORD}</span>
           </Col>
